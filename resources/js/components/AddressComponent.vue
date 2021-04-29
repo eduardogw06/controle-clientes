@@ -104,30 +104,35 @@
                 $(".is-invalid").removeClass("is-invalid");
 
                 if(this.address.zipcode != ''){
-                    axios.get(`address/validateZipcode/${this.address.zipcode}`).then((response) => {
-                        if(response.data){
-                            if(response.data.isValid){
-                                this.address.address = response.data.logradouro;
-                                this.address.city = response.data.localidade;
-                                this.address.state = response.data.uf;
-                                this.address.neighborhood = response.data.bairro;
+                    axios.get(`address/validateZipcode/${this.address.zipcode}`)
+                        .then((response) => {
+                            if(response.data){
+                                if(response.data.isValid){
+                                    this.address.address = response.data.logradouro;
+                                    this.address.city = response.data.localidade;
+                                    this.address.state = response.data.uf;
+                                    this.address.neighborhood = response.data.bairro;
 
-                                this.address.isDisabled = true;
-                            }else{
-                                this.cleanForm();
-                                this.address.address = '';
-                                this.address.city = '';
-                                this.address.state = '';
-                                this.address.neighborhood = '';
-                                this.address.isDisabled = false;
+                                    this.address.isDisabled = true;
+                                }else {
+                                    this.address.address = '';
+                                    this.address.city = '';
+                                    this.address.state = '';
+                                    this.address.neighborhood = '';
+                                    this.address.isDisabled = false;
 
-                                $("#zipcode").removeClass("is-valid");
-                                $("#zipcode").addClass("is-invalid");
-                                $("#zipcode").parent().append('<div class="invalid-feedback">CEP inválido</div>');
+                                    $("#zipcode").removeClass("is-valid");
+                                    $("#zipcode").addClass("is-invalid");
+                                    $("#zipcode").parent().append('<div class="invalid-feedback">CEP inválido</div>');
+                                }
+
                             }
-
-                        }
-                    })
+                        })
+                        .catch(error => {
+                            $("#zipcode").removeClass("is-valid");
+                            $("#zipcode").addClass("is-invalid");
+                            $("#zipcode").parent().append('<div class="invalid-feedback">' + error.response.data.message + '</div>');
+                        });
                 }
             }
         }

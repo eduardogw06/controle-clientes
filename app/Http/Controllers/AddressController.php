@@ -82,7 +82,15 @@ class AddressController extends Controller {
     }
 
     public function validateZipcode(Request $request){
-        $viaCep = new Viacep($request->zipcode);
+        try {
+            $viaCep = new Viacep($request->zipcode);
+        } catch(Exception $ex) {
+            return response()->json([
+                'isValid' => false,
+                'message' => $ex->getMessage()
+            ], 200);
+        }
+
         $response = $viaCep->findZipcode();
 
         if($response['isValid']){
